@@ -1,72 +1,70 @@
 <?php
 /**
  * 策略模式
+ * ==========================================================================
+ * '策略'提供了一种用多个行为中的一个行为来配置一个类的方法：new 类(new 行为());
+ * ==========================================================================
+ * 一个类定义了多种行为 , 并且这些行为在这个类的操作中以多个条件语句的形式出现。
+ * 将相关的条件分支移入它们各自的Strategy类中以代替这些条件语句
+ * ==========================================================================
+ * 提供了可以替换继承关系的办法
+ * ==========================================================================
  */
 header('Content-Type:text/html;charset=utf-8');
 
 /**
- * Interface iCheck
- * 抽象策略角色： 策略类，通常由一个接口或者抽象类实现。
+ * Interface Strategy
+ * 抽象策略角色：（Strategy），定义所有支持的算法的公共接口，通常由一个接口或者抽象类实现。
  */
-interface iCheck{
+interface Strategy{
 
-	public function isValid($value);
+	public function toDoSth();
 
-	public function show($bool);
 }
 
 /**
- * Class cPositive
- * 具体策略角色：包装了相关的算法和行为。
+ * Class ConcreteStrategy1
+ * 具体策略角色：（ConcreteStrategy）包装了相关的算法和行为，以Strategy接口实现某具体算法。
  */
-class cPositive implements iCheck{
+class ConcreteStrategy1 implements Strategy{
 
-	public function isValid($value){
-		return $value>0;
+	public function toDoSth(){
+		return 'hello,ConcreteStrategy1.';
 	}
 
-	public function show($bool){
-		echo $bool?'是正数':'不是正数';
-	}
 }
 
 /**
- * Class cEven
- * 具体策略角色：包装了相关的算法和行为。
+ * Class ConcreteStrategy2
+ * 具体策略角色：（ConcreteStrategy）包装了相关的算法和行为，以Strategy接口实现某具体算法。
  */
-class cEven implements iCheck{
+class ConcreteStrategy2 implements Strategy{
 
-	public function isValid($value)
+	public function toDoSth()
 	{
-		return $value%2==0;
+		return 'hello,ConcreteStrategy2.';
 	}
 
-	public function show($bool){
-		echo $bool?'是偶数':'不是偶数';
-	}
 }
 
 /**
- * Class valueCheck
- * 环境角色：持有一个策略类的引用，最终给客户端调用。
+ * Class Context
+ * 环境角色：（Context）持有一个策略类的引用，最终给客户端调用。
  */
-class valueCheck{
+class Context{
 
-	protected $_rule;
+	protected $_strategy;
 
-	public function __construct(iCheck $rule)
+	public function __construct(Strategy $strategy)
 	{
-		$this->_rule = $rule;
+		$this->_strategy = $strategy;
 	}
 
-	public function check($numbers){
-		foreach($numbers as $number){
-			$bool = $this->_rule->isValid($number);
-			echo $number.':'.$this->_rule->show($bool).'<br/>';
-		}
+	public function doSth(){
+		return $this->_strategy->toDoSth();
 	}
 }
 
 // 调用环境角色‘class valueCheck’，选择具体策略角色‘class cEven’
-$ms = new valueCheck(new cEven());
-$ms->check(array(1,2,3,4,5));
+$ms = new Context(new ConcreteStrategy2());
+echo $ms->doSth();
